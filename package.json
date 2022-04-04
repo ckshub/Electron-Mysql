@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@types/mysql": "^2.15.21",
     "antd": "^4.19.4",
     "babel-jest": "^27.4.2",
     "babel-loader": "^8.2.3",
@@ -34,7 +35,9 @@
     "jest": "^27.4.3",
     "jest-resolve": "^27.4.2",
     "jest-watch-typeahead": "^1.0.0",
+    "less": "^4.1.2",
     "mini-css-extract-plugin": "^2.4.5",
+    "mysql": "^2.18.1",
     "postcss": "^8.4.4",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-loader": "^6.2.1",
@@ -64,7 +67,79 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
-    "dev": "electron ."
+    "serve": "concurrently \"npm start\" \"electron .\"",
+    "dev": "electron .",
+    "package": "electron-packager . SQL --platform=win32 --arch=x64 --icon=sql.png --out=./out --asar --app-version=1.0.1 --overwrite --ignore=node_modules",
+    "pack": "electron-builder",
+    "prepack": "react-scripts build",
+    "pack:dir": "electron-builder --dir"
+  },
+  "build": {
+    "extends": null,
+    "productName": "my-app",
+    "copyright": "©2021 XXX, Inc.",
+    "appId": "com.my-app.app",
+    "directories": {
+      "output": "build-electron"
+    },
+    "files": [
+      "main/**/*",
+      "build/**/*"
+    ],
+    "extraResources": [
+      {
+        "filter": [
+          "./config.json",
+          "./server-config.json"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./public/favicon.ico",
+      "uninstallerIcon": "./public/favicon.ico",
+      "installerHeaderIcon": "./public/favicon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "my-app"
+    },
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "dmg": {
+      "background": "./appdmg.png",
+      "icon": "./icon.icns",
+      "iconSize": 100,
+      "contents": [
+        {
+          "x": 380,
+          "y": 280,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 110,
+          "y": 280,
+          "type": "file"
+        }
+      ],
+      "window": {
+        "width": 500,
+        "height": 500
+      }
+    }
   },
   "eslintConfig": {
     "extends": [
@@ -142,6 +217,8 @@
   },
   "devDependencies": {
     "@types/mysql": "^2.15.21",
+    "concurrently": "^7.1.0",
+    "electron-builder": "^22.14.13",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3"
   }
